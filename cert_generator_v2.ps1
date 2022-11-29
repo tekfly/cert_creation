@@ -1,4 +1,4 @@
-#RUN AS ADMIN##
+#RUN AS ADMIN
 If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]'Administrator')) {
 	Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
 	Exit
@@ -29,7 +29,7 @@ $cert = New-SelfSignedCertificate -Type Custom -KeySpec Signature `
 $mypwd = ConvertTo-SecureString -String "$Password" -Force -AsPlainText
 #Export the certificate from the LocalMachine personal store to a file `mypfx.pfx`
 Get-ChildItem -Path "cert:\LocalMachine\my\$($cert.Thumbprint)" | Export-PfxCertificate `
--FilePath mypfx.pfx `
+-FilePath $name_certificate.pfx `
 -Password $mypwd `
 -CryptoAlgorithmOption TripleDES_SHA1
 #Remove the certificate from the LocalMachine personal store
@@ -44,7 +44,9 @@ $cert = New-SelfSignedCertificate -Type Custom -KeySpec Signature `
 -NotAfter (Get-Date).AddYears(2)
 $mypwd = ConvertTo-SecureString -String "$Password" -Force -AsPlainText
 Get-ChildItem -Path "cert:\LocalMachine\my\$($cert.Thumbprint)" | Export-PfxCertificate `
--FilePath certificatepfx.pfx `
+-FilePath $name_certificate.pfx `
 -Password $mypwd `
 -CryptoAlgorithmOption TripleDES_SHA1
 Get-ChildItem "Cert:\LocalMachine\My\$($cert.Thumbprint)" | Remove-Item
+
+Write-Output "Certificate Password is: " $Password
