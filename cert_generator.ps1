@@ -1,11 +1,17 @@
+If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]'Administrator')) {
+	Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
+	Exit
+}
+
 $name_certificate = Read-Host "Please give a name to the Certificate."
 $confirmation = Read-Host "Do you want insert a custom password?"
 if ($confirmation -eq 'y') {
     $Password = Read-Host -Prompt 'Input the Password'
 }
 if ($confirmation -eq 'n') {
-    $Password = -join ((65..90) + (97..122) | Get-Random -Count 16 | % {[char]$_})
+    $Password = -join ((65..90) + (97..122) | Get-Random -Count 16 | ForEach-Object {[char]$_})
 }
+
 $years = Read-Host "How many Years until expire? (min 1 / max 4)"
 $comon_name = hostname
 $cert = New-SelfSignedCertificate -Type Custom -KeySpec Signature `
