@@ -7,7 +7,7 @@ If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
 	Exit
 }
 ########
-$name_certificate = Read-Host "Please give a name to the Certificate."
+#$name_certificate = Read-Host "Please give a name to the Certificate."
 #Custom_password
 $confirmation = Read-Host "Do you want insert a custom password? (y/n) "
 if ($confirmation -eq 'y') {
@@ -32,7 +32,7 @@ $cert = New-SelfSignedCertificate -Type Custom -KeySpec Signature `
 $mypwd = ConvertTo-SecureString -String "$Password" -Force -AsPlainText
 #Export the certificate from the LocalMachine personal store to a file `mypfx.pfx`
 Get-ChildItem -Path "cert:\LocalMachine\my\$($cert.Thumbprint)" | Export-PfxCertificate `
--FilePath $name_certificate.pfx `
+-FilePath new_certificate.pfx `
 -Password $mypwd `
 -CryptoAlgorithmOption TripleDES_SHA1
 #Remove the certificate from the LocalMachine personal store
@@ -47,9 +47,8 @@ $cert = New-SelfSignedCertificate -Type Custom -KeySpec Signature `
 -NotAfter (Get-Date).AddYears(2)
 $mypwd = ConvertTo-SecureString -String "$Password" -Force -AsPlainText
 Get-ChildItem -Path "cert:\LocalMachine\my\$($cert.Thumbprint)" | Export-PfxCertificate `
--FilePath $name_certificate.pfx `
+-FilePath new_certificate.pfx `
 -Password $mypwd `
 -CryptoAlgorithmOption TripleDES_SHA1
 Get-ChildItem "Cert:\LocalMachine\My\$($cert.Thumbprint)" | Remove-Item
-
 Write-Output "Certificate Password is: " $Password
